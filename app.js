@@ -4,8 +4,9 @@ const userRouter = require('./routes/userRoutes');
 const tourRouter = require('./routes/tourRoutes');
 
 const app = express();
+app.use(express.static("public"))
 
-//middleware
+//middlewares
 app.use(morgan('dev'));
 
 app.use(express.json()); //parses JSON request bodies and attaches the parsed data to req.body.

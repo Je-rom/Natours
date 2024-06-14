@@ -17,7 +17,11 @@
   },
   "homepage": "https://github.com/Je-rom/Natours#readme",
   "dependencies": {
+    "eslint": "^9.4.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.3",
     "express": "^4.19.2",
-    "morgan": "^1.10.0"
+    "morgan": "^1.10.0",
+    "prettier": "^3.3.2"
   }
 }
