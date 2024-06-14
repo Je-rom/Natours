@@ -1,0 +1,23 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "learning node, express and mongodb",
+  "main": "app.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Je-rom/Natours.git"
+  },
+  "author": "Jerry Abadi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Je-rom/Natours/issues"
+  },
+  "homepage": "https://github.com/Je-rom/Natours#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "morgan": "^1.10.0"
+  }
+}
