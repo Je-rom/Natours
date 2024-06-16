@@ -4,11 +4,11 @@ const tourController = require('./../controller/tourController');
 //mounted router
 const router = express.Router();
 //params middleware
-router.param('id', tourController.chekId);
+// router.param('id', tourController.chekId);
 router
   .route('/')
   .get(tourController.getAllTours)
-  .post(tourController.checkBody, tourController.createTour); //chaining middlewares
+  .post(tourController.createTour); 
 router
   .route('/:id')
   .get(tourController.getTourById)
