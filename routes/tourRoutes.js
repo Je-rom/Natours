@@ -3,8 +3,8 @@ const tourController = require('./../controller/tourController');
 
 //mounted router
 const router = express.Router();
-//params middleware
-// router.param('id', tourController.chekId);
+
+router.route('/top-5-cheap').get(tourController.getCheapTours ,tourController.getAllTours)
 router
   .route('/')
   .get(tourController.getAllTours)
@@ -16,3 +16,5 @@ router
   .delete(tourController.deleteTour);
 
 module.exports = router;
+//params middleware
+// router.param('id', tourController.chekId);
