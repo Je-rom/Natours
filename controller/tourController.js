@@ -8,8 +8,7 @@ exports.getAllTours = async (req, res) => {
     //execute query
     const features = new apiFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
     const allTours = await features.query; 
-    
-    //response
+  
     res.status(200).json({
       status: "success",
       results: allTours.length,
@@ -105,6 +104,40 @@ exports.getCheapTours=(req, res, next)=>{
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
   next();
 }
+
+exports.getTourStats = async (req, res)=>{
+  try {
+    const stats = await Tour.aggregate([
+    {
+      $match: {ratingsAverage:  {$gte: 4.5}}
+    },
+    {
+      $group: 
+      {
+        _id: {$toUpper: '$difficulty'},
+        numTours: {$sum: 1},
+        numRatings: {$sum : '$ratingsQuantity'},
+        avgRating: {$avg: '$ratingsAverage'},
+        avgPrice: {$avg: '$price'},
+        minPrice: {$min: '$price'},
+        maxPrice: {$max: '$price'}
+      }
+    }
+  ]);
+  res.status(200).json({
+    status: 'success',
+    message: 'successfully fetched tour',
+    data: {
+      stats
+    }
+  });
+  } catch (error) {
+    res.status(400).json({
+      status: "failed",
+      message: error
+    }) 
+  }
+};
 
 
 
