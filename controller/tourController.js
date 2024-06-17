@@ -3,9 +3,24 @@ const Tour = require('./../models/tourModels')
 
 exports.getAllTours = async (req, res) => {
   try {
-    const allTours = await Tour.find();
+    //build query
+    //filter
+    const queryObj = {...req.query} //creates a copy of the query parameters in the url
+    const excludeFields = ['page', 'sort', 'limit', 'fields']
+    excludeFields.forEach(e=> delete queryObj[e])
+
+    let query = Tour.find(queryObj)//creates a mongoose query object, find all documents in the tour collection that match the query parameters
+    
+    //sort
+      if(req.query.sort){
+        query = query.sort(req.query.sort)
+      }
+  
+    const allTours = await query; //execute query
+    //response
     res.status(200).json({
       status: "success",
+      results: allTours.length,
       message: "Fetched all tours",
       data: {
         allTours
@@ -92,3 +107,9 @@ exports.deleteTour = async (req, res) => {
   }
 };
 
+   // if (allTours.length === 0) {
+    //   return res.status(404).json({
+    //     status: "fail",
+    //     message: "No tours found matching the query parameters"
+    //   });
+    // }
