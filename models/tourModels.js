@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-
 const tourSchema = new mongoose.Schema({
     name: {
       type: String,
@@ -51,10 +50,19 @@ const tourSchema = new mongoose.Schema({
       type: Date,
       default: Date.now()
     },
-    startDates:[Date]
+    startDates:[Date],
+    secretTour:{
+      type: Boolean,
+      default:false
+    }
   });
   
   //model
   const Tour = mongoose.model("Tour", tourSchema)
+  //query hook
+  tourSchema.pre('find', function(next){
+    this.find({secretTour: {$ne: true}})
+    next();
+  })
 
   module.exports = Tour;
