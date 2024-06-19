@@ -1,14 +1,14 @@
 const express = require('express');
 const Tour = require('./../models/tourModels')
 const apiFeatures = require('./../utils/apiFeatures');
+const catchAsync = require('./../utils/catchAsync');
+const AppError = require('../utils/appError');
 
 
-exports.getAllTours = async (req, res) => {
-  try {
+exports.getAllTours = catchAsync (async (req, res, next) => {
     //execute query
     const features = new apiFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
     const allTours = await features.query; 
-  
     res.status(200).json({
       status: "success",
       results: allTours.length,
@@ -17,32 +17,21 @@ exports.getAllTours = async (req, res) => {
         allTours
       }
     });
-  } catch (error) {
-    res.status(400).json({
-      status: 'failed',
-      message: 'Could not find tours'
-    })
-  }
-};
+});
 
-exports.getTourById = async (req, res) => {
-  try {
+exports.getTourById = catchAsync (async (req, res, next) => {
     const getToursById = await Tour.findById(req.params.id);
+    if(!getToursById){
+      return next(new AppError('Invalid Id, Tour not found with that Id', 404))
+    }
     res.status(200).json({
       status: 'success',
       message: `found tour`,
       data: getToursById
     });
-  } catch (error) {
-    res.status(400).json({
-      status: 'failed',
-      message: 'Tour not found'
-    })
-  }
-};
+});
 
-exports.createTour = async (req, res) => {
-  try {
+exports.createTour = catchAsync (async (req, res, next) => {
     const newTour = await Tour.create(req.body)
     res.status(201).json({
       status: "success",
@@ -51,20 +40,16 @@ exports.createTour = async (req, res) => {
         newTour
       }
     });
-  } catch (error) {
-    res.status(400).json({
-      status: "failed",
-      message: error
-    })
-  }
-};
+});
 
-exports.updateTour = async (req, res) => {
-  try {
+exports.updateTour = catchAsync (async (req, res, next) => {
     const updateTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true
     })
+    if(!updateTour){
+      return next(new AppError('Invalid tour Id', 404))
+    }
     res.status(200).json({
       status: 'success',
       message: 'successfully updated tour',
@@ -72,17 +57,13 @@ exports.updateTour = async (req, res) => {
         updateTour
       },
     });
-  } catch (error) {
-    res.status(400).json({
-      status: "failed",
-      message: error
-    })
-  }
-};
+});
 
-exports.deleteTour = async (req, res) => {
-  try {
+exports.deleteTour = catchAsync( async (req, res, next) => {
     const deletTour = await Tour.findByIdAndDelete(req.params.id)
+    if(!deletTour){
+      return next(new AppError('Invalid tour Id', 404))
+    }
     res.status(204).json({
       status: 'success',
       message: 'successfully deleted tour',
@@ -90,23 +71,17 @@ exports.deleteTour = async (req, res) => {
         deletTour
       }
     });
-  } catch (error) {
-    res.status(400).json({
-      status: "failed",
-      message: error
-    }) 
-  }
-};
+});
 
-exports.getCheapTours=(req, res, next)=>{
+//middleware
+exports.getCheapTours= (req, res, next)=>{
   req.query.limit = 5;
   req.query.sort = '-ratingsAverage,price';
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
   next();
-}
+};
 
-exports.getTourStats = async (req, res)=>{
-  try {
+exports.getTourStats = catchAsync( async (req, res, next)=>{
     const stats = await Tour.aggregate([
     {
       $match: {ratingsAverage:  {$gte: 4.5}}
@@ -131,16 +106,9 @@ exports.getTourStats = async (req, res)=>{
       stats
     }
   });
-  } catch (error) {
-    res.status(400).json({
-      status: "failed",
-      message: error
-    }) 
-  }
-};
+});
 
-exports.getMontlyPlan = async (req, res)=>{
-try {
+exports.getMontlyPlan = catchAsync( async (req, res, next)=>{
   const year = req.params.year * 1
   const plan = await Tour.aggregate([
     {
@@ -175,13 +143,7 @@ try {
       plan
     }
   });
-} catch (error) {
-  res.status(400).json({
-      status: "failed",
-      message: error
-    }) 
-}
-}
+});
 
 
    // if (allTours.length === 0) {

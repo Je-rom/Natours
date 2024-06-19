@@ -3,6 +3,7 @@ const dotenv = require('dotenv')
 const app = require('./app');
 
 dotenv.config({path: './.env'});
+console.log(process.env.NODE_ENV)
 
 const DB = process.env.CONNECTION_STRING;
 
@@ -16,3 +17,6 @@ mongoose.connect(DB, {
 app.listen(7000, () => {
   console.log('listening on port 7000');
 });
+
+
+  // start:prod: "NODE_ENV=production nodemon server.js"
