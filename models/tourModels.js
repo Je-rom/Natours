@@ -73,8 +73,9 @@ const tourSchema = new mongoose.Schema({
   },
 });
 
-//model
+//create model
 const Tour = mongoose.model('Tour', tourSchema);
+
 //query hook
 tourSchema.pre('find', function (next) {
   this.find({ secretTour: { $ne: true } });
