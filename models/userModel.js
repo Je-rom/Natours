@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please input a name'],
-    minLength: [5, 'User name cannot be less than 5 characters'],
-    maxLength: [50, 'User name cannot be more than 50 characters'],
+    minLength: [5, 'Name cannot be less than 5 characters'],
+    maxLength: [50, 'Name cannot be more than 50 characters'],
   },
   email: {
     type: String,
@@ -20,8 +20,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please input your password'],
     minLength: [8, 'Password must be at least 8 characters'],
+    select: false
   },
-  confirmPassowrd: {
+  confirmPassword: {
     type: String,
     required: [true, 'Confirm Password is required'],
     validate: {
@@ -40,7 +41,7 @@ userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
-  this.confirmPassowrd = undefined; //required input not required to persist to the db
+  this.confirmPassword = undefined; //required input not required to persist to the db
   next();
 });
 
