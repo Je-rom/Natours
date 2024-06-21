@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const {promisify} = require('util');
 
 
 const signToken = id =>{
@@ -15,7 +16,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
   });
-  const jwtToken = signToken(newUser._id)
+  const jwtToken = signToken(newUser.id)
   res.status(201).json({
     status: 'success',
     jwtToken,
@@ -40,7 +41,7 @@ exports.signin = catchAsync(async(req, res, next)=>{
 
   user.password = undefined;
 
-  const jwtToken = signToken(user._id)
+  const jwtToken = signToken(user.id)
   res.status(200).json({
     status: 'success',
     message: 'successfully logged in',
@@ -50,3 +51,26 @@ exports.signin = catchAsync(async(req, res, next)=>{
     }
   })
 });
+
+exports.protected = catchAsync( async(req, res, next)=>{
+  //check if the token is available
+  let token;
+  if(req.headers.authorization && req.headers.authorization.startsWith('Bearer')){
+    token = req.headers.authorization.split(' ')[1]
+  }
+
+  if(!token){
+    return next((new AppError('You are not logged in, please login', 401)));
+  }
+
+  //verify the token
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET)
+
+  //check if the verified user with the token still exists
+  const verifiedUser = await User.findById(decoded.id)
+  if(!verifiedUser){
+    return next(new AppError('The user belonging to this token, no longer exists', 401))
+  }
+  //to the next route handler, grant access
+  next();
+})
