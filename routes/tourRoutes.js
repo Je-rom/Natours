@@ -9,17 +9,17 @@ router
   .route('/top-5-cheap')
   .get(tourController.getCheapTours, tourController.getAllTours);
 
-router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/monthly-plan/:year').get(tourController.getMontlyPlan);
+router.route('/tour-stats').get(authController.protected, tourController.getTourStats);
+router.route('/monthly-plan/:year').get(authController.protected, tourController.getMontlyPlan);
 router
   .route('/')
   .get(authController.protected, tourController.getAllTours)
-  .post(tourController.createTour);
+  .post(authController.protected, authController.userRole('admin', 'lead-guide') ,tourController.createTour);
 router
   .route('/:id')
-  .get(tourController.getTourById)
-  .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .get(authController.protected, tourController.getTourById)
+  .patch(authController.protected, authController.userRole('admin', 'lead-guide') ,tourController.updateTour)
+  .delete(authController.protected,authController.userRole('admin', 'lead-guide'),tourController.deleteTour);
 
 module.exports = router;
 //params middleware

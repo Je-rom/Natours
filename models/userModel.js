@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
     lowercase: true,
     validate: [validator.isEmail, 'Please input a valid email'],
   },
+  role:{
+    type: String,
+    enum:['user','admin', 'lead-guide'],
+    default: 'user'
+  },
   password: {
     type: String,
     required: [true, 'Please input your password'],
@@ -34,6 +39,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   photo: String,
+  passwordChangedAt: Date,
 });
 
 //hash password(document middleware)
@@ -49,6 +55,16 @@ userSchema.pre('save', async function (next) {
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword){
   return await bcrypt.compare(candidatePassword, userPassword)
 }
+
+//check if password was changed after the token was issued
+userSchema.methods.changedPasswordAfter = function(JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTimestamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < changedTimestamp;
+  }
+  //not changed
+  return false;
+};
 
 //create model
 const User = mongoose.model('User', userSchema);

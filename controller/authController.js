@@ -15,6 +15,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     confirmPassword: req.body.confirmPassword,
+    role: req.body.role
   });
   const jwtToken = signToken(newUser.id)
   res.status(201).json({
@@ -45,13 +46,14 @@ exports.signin = catchAsync(async(req, res, next)=>{
   res.status(200).json({
     status: 'success',
     message: 'successfully logged in',
+    jwtToken,
     data:{
       user: user,
-      token: jwtToken,
     }
   })
 });
 
+//protect tour routes
 exports.protected = catchAsync( async(req, res, next)=>{
   //check if the token is available
   let token;
@@ -71,6 +73,24 @@ exports.protected = catchAsync( async(req, res, next)=>{
   if(!verifiedUser){
     return next(new AppError('The user belonging to this token, no longer exists', 401))
   }
+
+  //check if user changed password after the token was issued
+  if (verifiedUser.changedPasswordAfter(decoded.iat)) {
+    return next(new AppError('User recently changed password! Please log in again.', 401));
+  }
+
+  req.user = verifiedUser;
+
   //to the next route handler, grant access
   next();
-})
+});
+
+//check user role
+exports.userRole = (...role)=>{ //wrapper function
+  return (req, res, next)=>{
+    if(!role.includes(req.user.role)){
+      return next(new AppError('You dont have permission to perform this action, only Admins', 403))
+    }
+    next();
+  }
+};
