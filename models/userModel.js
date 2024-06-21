@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Confirm Password is required'],
     validate: {
       validator: function (e) {
-        //only works when we create a new obkect or save;
+        //only works when we create a new object or save;
         return e === this.password;
       },
       message: 'Confirm password does not match with the password',
@@ -44,6 +44,11 @@ userSchema.pre('save', async function (next) {
   this.confirmPassword = undefined; //required input not required to persist to the db
   next();
 });
+
+//check if user password is correct (instance method)
+userSchema.methods.correctPassword = async function(candidatePassword, userPassword){
+  return await bcrypt.compare(candidatePassword, userPassword)
+}
 
 //create model
 const User = mongoose.model('User', userSchema);

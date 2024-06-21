@@ -1,11 +1,19 @@
 const express = require('express');
+const User = require('./../models/userModel');
+const catchAsync = require('./../utils/catchAsync');
 
-exports.getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: 'failed',
-    message: 'server resource not yet defined',
+
+exports.getAllUsers = catchAsync( async (req, res, next) => {
+  const allUsers = await User.find();
+  res.status(200).json({
+    status: 'success',
+    results: allUsers.length,
+    message: 'Fetched all users',
+    data: {
+      allUsers,
+    },
   });
-};
+});
 
 exports.createUser = (req, res) => {
   res.status(500).json({
