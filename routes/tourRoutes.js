@@ -14,11 +14,11 @@ router.route('/monthly-plan/:year').get(authController.protected, tourController
 router
   .route('/')
   .get(authController.protected, tourController.getAllTours)
-  .post(authController.protected, authController.userRole('admin', 'lead-guide') ,tourController.createTour);
+  .post(authController.protected, tourController.createTour);
 router
   .route('/:id')
   .get(authController.protected, tourController.getTourById)
-  .patch(authController.protected, authController.userRole('admin', 'lead-guide') ,tourController.updateTour)
+  .patch(authController.protected,tourController.updateTour)
   .delete(authController.protected,authController.userRole('admin', 'lead-guide'),tourController.deleteTour);
 
 module.exports = router;
