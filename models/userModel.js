@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please input your password'],
     minLength: [8, 'Password must be at least 8 characters'],
-    select: false
+    select: false //hide document
   },
   confirmPassword: {
     type: String,
@@ -43,7 +43,12 @@ const userSchema = new mongoose.Schema({
   photo: String,
   passwordChangedAt: Date,
   passwordResetToken: String,
-  passwordResetExpires: Date
+  passwordResetExpires: Date,
+  active: {
+    type : Boolean,
+    default: true,
+    select: false
+  }
 });
 
 //hash password(document middleware)
@@ -62,6 +67,12 @@ userSchema.pre('save', function(next){
   this.passwordChangedAt = Date.now() - 1000
   next();
 });
+
+//query middleware
+userSchema.pre(/^find/, function(next){
+  this.find({active: {$ne: false}})
+  next();
+})
 
 //check if user password is correct (instance method)
 userSchema.methods.correctPassword = async function(candidatePassword, userPassword){

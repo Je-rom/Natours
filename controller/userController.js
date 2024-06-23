@@ -40,3 +40,11 @@ exports.deleteUserById = (req, res) => {
     message: 'server resource not yet defined',
   });
 };
+
+
+exports.deleteMe = catchAsync(async(req, res, next)=>{
+  const user = await User.findByIdAndUpdate(req.user.id, {active: false});
+  res.status(204).json({
+    status: 'success',
+  });
+})
