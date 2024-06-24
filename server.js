@@ -3,13 +3,11 @@ const dotenv = require('dotenv');
 process.on('uncaughtException', (err) => {
   console.log('uncaught Exception, shutting down');
   console.log(err);
-    process.exit(1);
+  process.exit(1);
 });
-
 
 dotenv.config({ path: './.env' });
 const app = require('./app');
-
 
 const DB = process.env.CONNECTION_STRING;
 
@@ -35,9 +33,6 @@ process.on('unhandledRejection', (err) => {
   });
 });
 
-
-
 //cross-env
 //npm install cross-env --save-dev
 //console.log(process.env.NODE_ENV)
-//cross-env

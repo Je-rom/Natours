@@ -147,10 +147,3 @@ exports.getMontlyPlan = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-// if (allTours.length === 0) {
-//   return res.status(404).json({
-//     status: "fail",
-//     message: "No tours found matching the query parameters"
-//   });
-// }
