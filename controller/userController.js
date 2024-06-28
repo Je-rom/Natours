@@ -2,8 +2,7 @@ const express = require('express');
 const User = require('./../models/userModel');
 const catchAsync = require('./../utils/catchAsync');
 
-
-exports.getAllUsers = catchAsync( async (req, res, next) => {
+exports.getAllUsers = catchAsync(async (req, res, next) => {
   const allUsers = await User.find();
   res.status(200).json({
     status: 'success',
@@ -41,10 +40,9 @@ exports.deleteUserById = (req, res) => {
   });
 };
 
-
-exports.deleteMe = catchAsync(async(req, res, next)=>{
-  const user = await User.findByIdAndUpdate(req.user.id, {active: false});
+exports.deleteMe = catchAsync(async (req, res, next) => {
+  const user = await User.findByIdAndUpdate(req.user.id, { active: false });
   res.status(204).json({
     status: 'success',
   });
-})
+});
