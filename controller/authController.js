@@ -67,7 +67,7 @@ exports.signin = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-//protect tour routes
+//protect routes
 exports.protected = catchAsync(async (req, res, next) => {
   //check if the token is available
   let token;
